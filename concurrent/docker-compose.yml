@@ -1,0 +1,11 @@
+version: "2.2"
+
+services:
+  app:
+    build: "."
+    env_file:
+      - ../.env
+    volumes:
+      - ./.data:/usr/app/.data
+    cpus: "0.5"
+    mem_limit: 512m

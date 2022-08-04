@@ -1,0 +1,20 @@
+version: "2.2"
+
+services:
+  app1:
+    build: "./app1"
+    env_file:
+      - ../.env
+    volumes:
+      - ./.data:/usr/one/.data
+    cpus: "0.5"
+    mem_limit: 512m
+
+  app2:
+    build: "./app2"
+    env_file:
+      - ../.env
+    volumes:
+      - ./.data:/usr/two/.data
+    cpus: "0.5"
+    mem_limit: 512m

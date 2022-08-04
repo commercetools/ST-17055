@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>Chart</title>
+  <style>
+    * {
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+      color: #404244;
+      max-width: 800px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+
+<label>Select multiple files to read from your system:</label>
+<br />
+<input type="file" id="fileinput" multiple />
+
+<canvas style="display: block; box-sizing: border-box; height: 40px; width: 80px;" width="80" height="40"
+  id="myChart"></canvas>
+
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+
+    function loadFile(file) {
+      return new Promise(function (resolve, reject) {
+        var fr = new FileReader();
+
+        fr.onload = function () {
+          resolve(fr.result);
+        };
+
+        fr.onerror = function () {
+          reject(fr);
+        };
+
+        fr.readAsText(file);
+      });
+    }
+
+
+    // Handle multiple fileuploads
+    document.getElementById("fileinput")
+      .addEventListener("change", function (ev) {
+        var labels = []
+        var readers = [];
+        var files = ev.currentTarget.files;
+
+        // Abort if there were no files selected
+        if (!files.length) return;
+
+        // Store promises in array
+        for (var i = 0; i < files.length; i++) {
+          labels.push(files[i].name)
+          var file = loadFile(files[i])
+
+          readers.push(file)
+        }
+
+        Promise.all(readers).then((values) => {
+          var data = {
+            labels: Array(100).fill(0).map((_, i) => i),
+            datasets: values.map((v, i) => {
+              var color = '#' + (Math.random() * 0xfffff * 1000000).toString(16).slice(0, 6)
+              return {
+                label: labels[i].replace(/\.json/, ''),
+                data: JSON.parse(values[i]).map(v => v.took),
+                borderColor: color,
+                backgroundColor: color
+              }
+            })
+          };
+
+          var config = {
+            type: 'line',
+            data: data,
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Line Chart'
+                }
+              }
+            },
+          };
+
+          var myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+          )
+        });
+      }, false);
+
+  </script>
+</body>
+
+</html>
