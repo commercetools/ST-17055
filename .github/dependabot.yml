@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: docker
+  directory: /non-concurrent/app2
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /non-concurrent/app1
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /concurrent
+  schedule:
+    interval: weekly
